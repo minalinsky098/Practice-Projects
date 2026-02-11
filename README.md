@@ -22,10 +22,21 @@ An interactive weather application that fetches 7-day forecast data based on use
 - **Features**: Input validation, async/await patterns, error handling, weather code interpretation
 - **Date**: February 11, 2026
 
+### 3. Blog Post Management App (JSONPlaceholder API)
+A practice project for HTTP methods (GET, POST, PUT, DELETE) with a simulated blog management interface. Users can fetch existing blog posts, create new posts, update post content, and delete posts.
+
+- **Location**: `PostGetApiPractice/`
+- **Files**: `PostGet.html`, `index.js`
+- **How to run**: Open `PostGet.html` in your browser
+- **API**: [JSONPlaceholder](https://jsonplaceholder.typicode.com/) (fake REST API for testing)
+- **Features**: GET, POST, PUT, DELETE operations, error handling, HTTP status code checking
+- **Date**: February 11, 2026
+
 ## Repository Structure
 
 - `FetchApiPractice/` — Pokémon data fetch demo (HTML + JS)
 - `SecondFetchApiPractice/` — Weather forecast app with coordinate input (HTML + JS)
+- `PostGetApiPractice/` — Blog post management with GET, POST, PUT, DELETE (HTML + JS)
 
 ## License
 

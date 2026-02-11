@@ -21,31 +21,15 @@ async function getPostData(){ // Get Fetch
         throw error;
     }
 }
-async function getButtonHandler(){ //Get Button Handler
+async function getButtonHandler(){ //GET Button Handler
     const getButton = document.getElementById("getButton");
-    const postTitle = document.getElementById("postTitle");
-    const postArea = document.getElementById("postArea");
     const blogList = document.getElementById("blogList");
     let postData = null;
     getButton.disabled = true;
     try{
         postData = await getPostData();
-        console.log(typeof(postData));
         blogList.textContent = '';
-        postData.forEach(post => {
-            const link = document.createElement('button');
-            link.className = 'blog-link';
-            link.textContent = post.title.substring(0, 10) + '...';
-            link.href = post;
-            link.addEventListener('click', ()=>{
-                selectedPostid = post.id;
-                postArea.value = post.body;
-                postTitle.value = post.title;
-                console.log(link.href);
-            });
-            blogList.appendChild(link);
-            blogList.append(document.createElement("br"));
-        });
+        postData.forEach(post => createButtons(post, blogList)); //create buttons for the links
     }
     catch(error){
         window.alert(`Unable to load posts: ${error.message}`);
@@ -53,8 +37,22 @@ async function getButtonHandler(){ //Get Button Handler
     }
     getButton.disabled = false;
 }
+function createButtons(post, blogList){ //create buttons when you click the get button
+        const link = document.createElement('button');
+        link.className = 'blog-link';
+        link.textContent = post.title.substring(0, 10) + '...';
+        link.href = post;
+        link.addEventListener('click', ()=>{
+            selectedPostid = post.id;
+            postArea.value = post.body;
+            postTitle.value = post.title;
+            console.log(link.href); //log
+        });
+        blogList.appendChild(link);
+        blogList.append(document.createElement("br"));
+}
 
-async function putButtonHandler(){
+async function putButtonHandler(){ //PUT Button handler
     const postTitle = document.getElementById("postTitle");
     const postArea = document.getElementById("postArea");
     const blogButtons = document.getElementsByClassName("blog-link");

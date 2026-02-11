@@ -19,11 +19,7 @@ async function pokemonButtonHandler(){
     const pokemonName = document.getElementById("pokemonName");
     const moveset = document.getElementById("moveset");
     const pokemonImage = document.getElementById("pokemonImage");
-
-    // show loading state to user
-    pokemonName.textContent = 'Loading...';
-    moveset.textContent = '';
-    pokemonImage.src = '';
+    let allmoves = "";
 
     // prevent duplicate clicks while request is in flight
     findPokemonButton.disabled = true;
@@ -31,6 +27,8 @@ async function pokemonButtonHandler(){
     try {
         // async work happens here — user sees "Loading..."
         const pokemonInfo = await getPokemon(searchPokemonInput.value);
+        console.log(pokemonInfo);
+        console.log(pokemonInfo.name);
 
         // on success, replace loading state with data
         pokemonName.textContent = pokemonInfo.name;

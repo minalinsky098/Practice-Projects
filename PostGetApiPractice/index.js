@@ -75,7 +75,6 @@ async function putButtonHandler(postArea, postTitle, putButton){ //PUT Button ha
 }
 
 async function postButtonHandler(){ //will be added for later
-    console.log("hello");
 }
 function throwForHttpError(response) {
   if (response.ok) return;

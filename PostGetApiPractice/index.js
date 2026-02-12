@@ -10,6 +10,8 @@ async function getButtonHandler(postArea, postTitle, putButton){ //GET Button Ha
     const blogList = document.getElementById("blogList");
     let postData = null;
     getButton.disabled = true;
+    selectedPostId = null;
+    putButton.disabled = true;
     try{
         postData = await getPostData();
         blogList.textContent = '';

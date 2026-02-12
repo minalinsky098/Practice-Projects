@@ -1,7 +1,6 @@
-let selectedPostid = null;
+let selectedPostId = null;
 async function getPostData(){ // Get Fetch
     const url = "https://jsonplaceholder.typicode.com/posts?userId=1";
-    try{
     let response = await fetch(url);
     if (!response.ok){
         switch(response.status){
@@ -12,14 +11,10 @@ async function getPostData(){ // Get Fetch
             case 500:
                 throw new Error(`SERVER_ERROR`);
             default:
-                throw new Error(`HTTPS ${response.status}`);
+                throw new Error(`HTTP ${response.status}`);
         }
     }
     return await response.json();
-    }
-    catch(error){
-        throw error;
-    }
 }
 async function getButtonHandler(){ //GET Button Handler
     const getButton = document.getElementById("getButton");
@@ -35,15 +30,18 @@ async function getButtonHandler(){ //GET Button Handler
         window.alert(`Unable to load posts: ${error.message}`);
         console.log(error);
     }
+    finally{
     getButton.disabled = false;
+    }
 }
 function createButtons(post, blogList){ //create buttons when you click the get button
+        const postArea = document.getElementById("postArea");
+        const postTitle = document.getElementById("postTitle");
         const link = document.createElement('button');
         link.className = 'blog-link';
         link.textContent = post.title.substring(0, 10) + '...';
-        link.href = post;
         link.addEventListener('click', ()=>{
-            selectedPostid = post.id;
+            selectedPostId = post.id;
             postArea.value = post.body;
             postTitle.value = post.title;
         });
@@ -52,11 +50,11 @@ function createButtons(post, blogList){ //create buttons when you click the get 
 }
 
 async function putButtonHandler(){ //PUT Button handler
-    if (!selectedPostid){
+    if (!selectedPostId){
         window.alert("Please select a post to update");
         return;
     }
-    const url = `https://jsonplaceholder.typicode.com/posts/${selectedPostid}`;
+    const url = `https://jsonplaceholder.typicode.com/posts/${selectedPostId}`;
     const postTitle = document.getElementById("postTitle");
     const postArea = document.getElementById("postArea");
     const putButton = document.getElementById("putButton");
@@ -69,7 +67,7 @@ async function putButtonHandler(){ //PUT Button handler
                 userId : 1,
                 title : postTitle.value,
                 body : postArea.value,
-                id : selectedPostid,
+                id : selectedPostId,
             }),
             headers : {
                 'Content-Type' : 'application/json; charset=UTF-8',
@@ -94,10 +92,12 @@ async function putButtonHandler(){ //PUT Button handler
     catch(error){
         console.log(error);
     }
-    putButton.disabled = false;
+    finally{
+        putButton.disabled = false;
+    }
 }
 
-async function postButtonHandler(){
+async function postButtonHandler(){ //will be added for later
 
 }
 async function main(){

@@ -1,14 +1,11 @@
 let selectedPostId = null;
-const putButton = document.getElementById("putButton");
-const postArea = document.getElementById("postArea");
-const postTitle = document.getElementById("postTitle");
 async function getPostData(){ // Get Fetch
     const url = "https://jsonplaceholder.typicode.com/posts?userId=1";
     let response = await fetch(url);
     throwForHttpError(response);
     return response.json();
 }
-async function getButtonHandler(){ //GET Button Handler
+async function getButtonHandler(postArea, postTitle, putButton){ //GET Button Handler
     const getButton = document.getElementById("getButton");
     const blogList = document.getElementById("blogList");
     let postData = null;
@@ -16,7 +13,7 @@ async function getButtonHandler(){ //GET Button Handler
     try{
         postData = await getPostData();
         blogList.textContent = '';
-        postData.forEach(post => createButtons(post, blogList)); //create buttons for the links
+        postData.forEach(post => createButtons(post, blogList, postArea, postTitle, putButton)); //create buttons for the links
     }
     catch(error){
         window.alert(`Unable to load posts: ${error.message}`);
@@ -26,7 +23,7 @@ async function getButtonHandler(){ //GET Button Handler
     getButton.disabled = false;
     }
 }
-function createButtons(post, blogList){ //create buttons when you click the get button
+function createButtons(post, blogList, postArea, postTitle, putButton){ //create buttons when you click the get button
         const link = document.createElement('button');
         link.className = 'blog-link';
         link.textContent = post.title.substring(0, 10) + '...';
@@ -40,7 +37,11 @@ function createButtons(post, blogList){ //create buttons when you click the get 
         blogList.append(document.createElement("br"));
 }
 
-async function putButtonHandler(){ //PUT Button handler
+async function putButtonHandler(postArea, postTitle, putButton){ //PUT Button handler
+    if (selectedPostId == null) {
+        putButton.disabled = true;
+        return;
+    }
     const url = `https://jsonplaceholder.typicode.com/posts/${selectedPostId}`;
     let data = null;
     putButton.disabled = true;
@@ -91,8 +92,11 @@ function throwForHttpError(response) {
   throw new Error(msg);
 }
 async function main(){
+    const putButton = document.getElementById("putButton");
+    const postArea = document.getElementById("postArea");
+    const postTitle = document.getElementById("postTitle");
     const getButton = document.getElementById("getButton");
-    getButton.addEventListener('click', getButtonHandler);
-    putButton.addEventListener('click', putButtonHandler);
+    getButton.addEventListener('click', () => getButtonHandler(postArea, postTitle, putButton));
+    putButton.addEventListener('click', () => putButtonHandler(postArea, postTitle, putButton));
 }
 main();

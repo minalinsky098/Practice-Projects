@@ -46,26 +46,66 @@ function createButtons(post, blogList){ //create buttons when you click the get 
             selectedPostid = post.id;
             postArea.value = post.body;
             postTitle.value = post.title;
-            console.log(link.href); //log
         });
         blogList.appendChild(link);
         blogList.append(document.createElement("br"));
 }
 
 async function putButtonHandler(){ //PUT Button handler
+    if (!selectedPostid){
+        window.alert("Please select a post to update");
+        return;
+    }
+    const url = `https://jsonplaceholder.typicode.com/posts/${selectedPostid}`;
     const postTitle = document.getElementById("postTitle");
     const postArea = document.getElementById("postArea");
-    const blogButtons = document.getElementsByClassName("blog-link");
-    postTitle.disabled = false;
-    postArea.disabled = false;
-    console.log(selectedPostid);
-    console.log(blogButtons[selectedPostid-1].href);
+    const putButton = document.getElementById("putButton");
+    let data = null;
+    putButton.disabled = true;
+    try{
+        const response = await fetch(url,{
+            method : 'PUT',
+            body : JSON.stringify({
+                userId : 1,
+                title : postTitle.value,
+                body : postArea.value,
+                id : selectedPostid,
+            }),
+            headers : {
+                'Content-Type' : 'application/json; charset=UTF-8',
+            },
+        });
+        if(!response.ok){
+            switch(response.status){
+                case 400:
+                    throw new Error(`INVALID_INPUT`);
+                case 404:
+                    throw new Error(`SERVER_NOT_FOUND`);
+                case 500:
+                    throw new Error(`SERVER_ERROR`);
+                default:
+                    throw new Error(`HTTPS ${response.status}`);
+            }
+        }
+        data = await response.json();
+        console.log('Updated: ', data);
+        window.alert("Post Updated!");
+    }
+    catch(error){
+        console.log(error);
+    }
+    putButton.disabled = false;
 }
 
+async function postButtonHandler(){
+
+}
 async function main(){
+    const postButton = document.getElementById("postButton");
     const getButton = document.getElementById("getButton");
     const putButton = document.getElementById("putButton");
     getButton.addEventListener('click', getButtonHandler);
     putButton.addEventListener('click', putButtonHandler);
+    postButton.addEventListener('click', postButtonHandler);
 }
 main();

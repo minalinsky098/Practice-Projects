@@ -3,8 +3,9 @@ async function getPostData(){ // Get Fetch
     const url = "https://jsonplaceholder.typicode.com/posts?userId=1";
     let response = await fetch(url);
     throwForHttpError(response);
-    return response.json();
+    return await response.json();
 }
+
 async function getButtonHandler(postArea, postTitle, putButton){ //GET Button Handler
     const getButton = document.getElementById("getButton");
     const blogList = document.getElementById("blogList");
@@ -23,6 +24,7 @@ async function getButtonHandler(postArea, postTitle, putButton){ //GET Button Ha
     getButton.disabled = false;
     }
 }
+
 function createButtons(post, blogList, postArea, postTitle, putButton){ //create buttons when you click the get button
         const link = document.createElement('button');
         link.className = 'blog-link';

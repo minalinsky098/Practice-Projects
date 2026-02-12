@@ -1,4 +1,6 @@
 let selectedPostId = null;
+const postArea = document.getElementById("postArea");
+const postTitle = document.getElementById("postTitle");
 async function getPostData(){ // Get Fetch
     const url = "https://jsonplaceholder.typicode.com/posts?userId=1";
     let response = await fetch(url);
@@ -35,8 +37,6 @@ async function getButtonHandler(){ //GET Button Handler
     }
 }
 function createButtons(post, blogList){ //create buttons when you click the get button
-        const postArea = document.getElementById("postArea");
-        const postTitle = document.getElementById("postTitle");
         const link = document.createElement('button');
         link.className = 'blog-link';
         link.textContent = post.title.substring(0, 10) + '...';
@@ -55,8 +55,6 @@ async function putButtonHandler(){ //PUT Button handler
         return;
     }
     const url = `https://jsonplaceholder.typicode.com/posts/${selectedPostId}`;
-    const postTitle = document.getElementById("postTitle");
-    const postArea = document.getElementById("postArea");
     const putButton = document.getElementById("putButton");
     let data = null;
     putButton.disabled = true;
@@ -82,7 +80,7 @@ async function putButtonHandler(){ //PUT Button handler
                 case 500:
                     throw new Error(`SERVER_ERROR`);
                 default:
-                    throw new Error(`HTTPS ${response.status}`);
+                    throw new Error(`HTTP ${response.status}`);
             }
         }
         data = await response.json();
@@ -91,6 +89,7 @@ async function putButtonHandler(){ //PUT Button handler
     }
     catch(error){
         console.log(error);
+        window.alert(`Unable to update post ${error.message}`);
     }
     finally{
         putButton.disabled = false;
@@ -101,11 +100,11 @@ async function postButtonHandler(){ //will be added for later
 
 }
 async function main(){
-    const postButton = document.getElementById("postButton");
+    //const postButton = document.getElementById("postButton");
     const getButton = document.getElementById("getButton");
     const putButton = document.getElementById("putButton");
     getButton.addEventListener('click', getButtonHandler);
     putButton.addEventListener('click', putButtonHandler);
-    postButton.addEventListener('click', postButtonHandler);
+    //postButton.addEventListener('click', postButtonHandler);
 }
 main();

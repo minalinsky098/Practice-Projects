@@ -3,7 +3,7 @@ async function getData(){ // Get Fetch
     const url = "https://jsonplaceholder.typicode.com/posts?userId=1";
     let response = await fetch(url);
     throwForHttpError(response);
-    return response.json();
+    return await response.json();
 }
 
 async function getCreateButtons(putButton, postArea, postTitle){
@@ -89,7 +89,6 @@ async function putButtonHandler(e,postArea, postTitle){ //PUT Button handler
 }
 
 async function postButtonHandler(){ //will be added for later
-
 }
 
 function throwForHttpError(response) {

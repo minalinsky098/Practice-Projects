@@ -84,12 +84,14 @@ function throwForHttpError(response) {
     409: 'Conflict',
     500: 'Server error'
   };
-  const msg = messages[response.status] || `HTTP ${response.status}`;
+  const fallbackMsg =
+    (response.statusText && response.statusText.trim()) || 'HTTP error';
+  const baseMsg = messages[response.status] || fallbackMsg;
+  const msg = `HTTP ${response.status} ${baseMsg}`;
   throw new Error(msg);
 }
 async function main(){
     const getButton = document.getElementById("getButton");
-    const putButton = document.getElementById("putButton");
     getButton.addEventListener('click', getButtonHandler);
     putButton.addEventListener('click', putButtonHandler);
 }

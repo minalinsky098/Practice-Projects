@@ -1,18 +1,18 @@
 let selectedPostId = null;
-async function getPostData(){ // Get Fetch
+async function getData(){ // Get Fetch
     const url = "https://jsonplaceholder.typicode.com/posts?userId=1";
     let response = await fetch(url);
     throwForHttpError(response);
     return await response.json();
 }
 
-async function getButtonHandler(postArea, postTitle, putButton){ //GET Button Handler
-    const getButton = document.getElementById("getButton");
-    const blogList = document.getElementById("blogList");
+async function getCreateButtons(putButton, postArea, postTitle){
     let postData = null;
-    getButton.disabled = true;
+    const blogList = document.getElementById("blogList");
+    selectedPostId = null;
+    putButton.disabled = true;
     try{
-        postData = await getPostData();
+        postData = await getData();
         blogList.textContent = '';
         postData.forEach(post => createButtons(post, blogList, postArea, postTitle, putButton)); //create buttons for the links
     }
@@ -20,9 +20,12 @@ async function getButtonHandler(postArea, postTitle, putButton){ //GET Button Ha
         window.alert(`Unable to load posts: ${error.message}`);
         console.log(error);
     }
-    finally{
-    getButton.disabled = false;
-    }
+}
+
+async function getButtonHandler(e, postArea, postTitle, putButton){ //GET Button Handler
+    e.target.disabled = true;
+    await getCreateButtons(putButton, postArea, postTitle);
+    e.target.disabled = false;
 }
 
 function createButtons(post, blogList, postArea, postTitle, putButton){ //create buttons when you click the get button
@@ -39,14 +42,9 @@ function createButtons(post, blogList, postArea, postTitle, putButton){ //create
         blogList.append(document.createElement("br"));
 }
 
-async function putButtonHandler(postArea, postTitle, putButton){ //PUT Button handler
-    if (selectedPostId == null) {
-        putButton.disabled = true;
-        return;
-    }
+async function putData(postArea, postTitle){
     const url = `https://jsonplaceholder.typicode.com/posts/${selectedPostId}`;
     let data = null;
-    putButton.disabled = true;
     try{
         const response = await fetch(url,{
             method : 'PUT',
@@ -62,20 +60,37 @@ async function putButtonHandler(postArea, postTitle, putButton){ //PUT Button ha
         });
         throwForHttpError(response);
         data = await response.json();
-        console.log('Updated: ', data);
-        window.alert("Post Updated!");
+        return data;
     }
     catch(error){
-        console.log(error);
+        throw error;
+    }
+}
+
+async function putButtonHandler(e,postArea, postTitle){ //PUT Button handler
+    let update = null
+    if (selectedPostId == null) {
+        e.target.disabled = true;
+        return;
+    }
+    e.target.disabled = true;
+    try{
+    update = putData(postArea, postTitle);
+    console.log('Updated: ', update);
+    window.alert("Post Updated!");
+    }
+    catch(error){
+        console.log(`Error: ${error}`);
         window.alert(`Unable to update post: ${error.message}`);
     }
     finally{
-        putButton.disabled = false;
+    e.target.disabled = false;
     }
 }
 
 async function postButtonHandler(){ //will be added for later
 }
+
 function throwForHttpError(response) {
   if (response.ok) return;
   const messages = {
@@ -92,12 +107,13 @@ function throwForHttpError(response) {
   const msg = `HTTP ${response.status} ${baseMsg}`;
   throw new Error(msg);
 }
+
 async function main(){
     const putButton = document.getElementById("putButton");
     const postArea = document.getElementById("postArea");
     const postTitle = document.getElementById("postTitle");
     const getButton = document.getElementById("getButton");
-    getButton.addEventListener('click', () => getButtonHandler(postArea, postTitle, putButton));
-    putButton.addEventListener('click', () => putButtonHandler(postArea, postTitle, putButton));
+    getButton.addEventListener('click', (e) => getButtonHandler(e,postArea, postTitle, putButton));
+    putButton.addEventListener('click', (e) => putButtonHandler(e,postArea, postTitle));
 }
 main();

@@ -1,27 +1,11 @@
-let selectedPostid = null;
+let selectedPostId = null;
 async function getPostData(){ // Get Fetch
     const url = "https://jsonplaceholder.typicode.com/posts?userId=1";
-    try{
     let response = await fetch(url);
-    if (!response.ok){
-        switch(response.status){
-            case 400:
-                throw new Error(`INVALID_INPUT`);
-            case 404:
-                throw new Error(`SERVER_NOT_FOUND`);
-            case 500:
-                throw new Error(`SERVER_ERROR`);
-            default:
-                throw new Error(`HTTPS ${response.status}`);
-        }
-    }
-    return await response.json();
-    }
-    catch(error){
-        throw error;
-    }
+    throwForHttpError(response);
+    return response.json();
 }
-async function getButtonHandler(){ //GET Button Handler
+async function getButtonHandler(postArea, postTitle, putButton){ //GET Button Handler
     const getButton = document.getElementById("getButton");
     const blogList = document.getElementById("blogList");
     let postData = null;
@@ -29,43 +13,90 @@ async function getButtonHandler(){ //GET Button Handler
     try{
         postData = await getPostData();
         blogList.textContent = '';
-        postData.forEach(post => createButtons(post, blogList)); //create buttons for the links
+        postData.forEach(post => createButtons(post, blogList, postArea, postTitle, putButton)); //create buttons for the links
     }
     catch(error){
         window.alert(`Unable to load posts: ${error.message}`);
         console.log(error);
     }
+    finally{
     getButton.disabled = false;
+    }
 }
-function createButtons(post, blogList){ //create buttons when you click the get button
+function createButtons(post, blogList, postArea, postTitle, putButton){ //create buttons when you click the get button
         const link = document.createElement('button');
         link.className = 'blog-link';
         link.textContent = post.title.substring(0, 10) + '...';
-        link.href = post;
         link.addEventListener('click', ()=>{
-            selectedPostid = post.id;
+            putButton.disabled = false;
+            selectedPostId = post.id;
             postArea.value = post.body;
             postTitle.value = post.title;
-            console.log(link.href); //log
         });
         blogList.appendChild(link);
         blogList.append(document.createElement("br"));
 }
 
-async function putButtonHandler(){ //PUT Button handler
-    const postTitle = document.getElementById("postTitle");
-    const postArea = document.getElementById("postArea");
-    const blogButtons = document.getElementsByClassName("blog-link");
-    postTitle.disabled = false;
-    postArea.disabled = false;
-    console.log(selectedPostid);
-    console.log(blogButtons[selectedPostid-1].href);
+async function putButtonHandler(postArea, postTitle, putButton){ //PUT Button handler
+    if (selectedPostId == null) {
+        putButton.disabled = true;
+        return;
+    }
+    const url = `https://jsonplaceholder.typicode.com/posts/${selectedPostId}`;
+    let data = null;
+    putButton.disabled = true;
+    try{
+        const response = await fetch(url,{
+            method : 'PUT',
+            body : JSON.stringify({
+                userId : 1,
+                title : postTitle.value,
+                body : postArea.value,
+                id : selectedPostId,
+            }),
+            headers : {
+                'Content-Type' : 'application/json; charset=UTF-8',
+            },
+        });
+        throwForHttpError(response);
+        data = await response.json();
+        console.log('Updated: ', data);
+        window.alert("Post Updated!");
+    }
+    catch(error){
+        console.log(error);
+        window.alert(`Unable to update post: ${error.message}`);
+    }
+    finally{
+        putButton.disabled = false;
+    }
 }
 
+async function postButtonHandler(){ //will be added for later
+
+}
+function throwForHttpError(response) {
+  if (response.ok) return;
+  const messages = {
+    400: 'Bad request',
+    401: 'Unauthorized',
+    403: 'Forbidden',
+    404: 'Not found',
+    409: 'Conflict',
+    500: 'Server error'
+  };
+  const fallbackMsg =
+    (response.statusText && response.statusText.trim()) || 'HTTP error';
+  const baseMsg = messages[response.status] || fallbackMsg;
+  const msg = `HTTP ${response.status} ${baseMsg}`;
+  throw new Error(msg);
+}
 async function main(){
-    const getButton = document.getElementById("getButton");
     const putButton = document.getElementById("putButton");
-    getButton.addEventListener('click', getButtonHandler);
-    putButton.addEventListener('click', putButtonHandler);
+    const postArea = document.getElementById("postArea");
+    const postTitle = document.getElementById("postTitle");
+    const getButton = document.getElementById("getButton");
+    getButton.addEventListener('click', () => getButtonHandler(postArea, postTitle, putButton));
+    putButton.addEventListener('click', () => putButtonHandler(postArea, postTitle, putButton));
 }
 main();

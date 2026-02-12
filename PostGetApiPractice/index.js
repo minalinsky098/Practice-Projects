@@ -60,22 +60,32 @@ async function putData(postArea, postTitle){
         });
         throwForHttpError(response);
         data = await response.json();
-        console.log('Updated: ', data);
-        window.alert("Post Updated!");
+        return data;
     }
     catch(error){
-        console.log(error);
-        window.alert(`Unable to update post: ${error.message}`);
+        throw error;
     }
 }
 
 async function putButtonHandler(e,postArea, postTitle){ //PUT Button handler
+    let update = null
     if (selectedPostId == null) {
         e.target.disabled = true;
         return;
     }
-    await putData(postArea, postTitle);
+    e.target.disabled = true;
+    try{
+    update = putData(postArea, postTitle);
+    console.log('Updated: ', update);
+    window.alert("Post Updated!");
+    }
+    catch(error){
+        console.log(`Error: ${error}`);
+        window.alert(`Unable to update post: ${error.message}`);
+    }
+    finally{
     e.target.disabled = false;
+    }
 }
 
 async function postButtonHandler(){ //will be added for later

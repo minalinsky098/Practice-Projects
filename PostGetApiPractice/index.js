@@ -3,7 +3,7 @@ async function getData(){ // Get Fetch
     const url = "https://jsonplaceholder.typicode.com/posts?userId=1";
     let response = await fetch(url);
     throwForHttpError(response);
-    return await response.json();
+    return response.json();
 }
 
 async function getCreateButtons(putButton, postArea, postTitle){
@@ -59,8 +59,7 @@ async function putData(postArea, postTitle){
             },
         });
         throwForHttpError(response);
-        data = await response.json();
-        return data;
+        return response.json();
     }
     catch(error){
         throw error;
@@ -75,7 +74,7 @@ async function putButtonHandler(e,postArea, postTitle){ //PUT Button handler
     }
     e.target.disabled = true;
     try{
-    update = putData(postArea, postTitle);
+    update = await putData(postArea, postTitle);
     console.log('Updated: ', update);
     window.alert("Post Updated!");
     }
@@ -87,8 +86,43 @@ async function putButtonHandler(e,postArea, postTitle){ //PUT Button handler
     e.target.disabled = false;
     }
 }
-
-async function postButtonHandler(){ //will be added for later
+async function postData(postArea, postTitle){
+    const url = "https://jsonplaceholder.typicode.com/posts";
+    let response = await fetch(url,{
+        method : "POST",
+        body : JSON.stringify({
+            userId : 1,
+            body : postArea.value,
+            title : postTitle.value,
+        }),
+        headers : {
+            "Content-Type" : "application/json",
+        },
+    });
+    throwForHttpError(response);
+    return response.json();
+}
+async function postButtonHandler(e, postArea, postTitle){ 
+    if (!postArea.value){
+        window.alert("ENTER A BODY FOR THE POST");
+        return;
+    }
+    else if(! postTitle.value){
+        window.alert("ENTER A TITLE FOR THE POST");
+        return;
+    }
+    e.target.disabled = true;
+    try{
+    response = await postData(postArea, postTitle);
+    window.alert("POST IS POSTED");
+    console.log('Posted!', response);
+    }
+    catch(error){
+        window.alert(`POST CANNOT BE POSTED ${error.message}`);
+    }
+    finally{
+        e.target.disabled = false;
+    }
 }
 
 function throwForHttpError(response) {
@@ -109,11 +143,14 @@ function throwForHttpError(response) {
 }
 
 async function main(){
+    const postButton = document.getElementById("postButton");
     const putButton = document.getElementById("putButton");
     const postArea = document.getElementById("postArea");
     const postTitle = document.getElementById("postTitle");
     const getButton = document.getElementById("getButton");
     getButton.addEventListener('click', (e) => getButtonHandler(e,postArea, postTitle, putButton));
     putButton.addEventListener('click', (e) => putButtonHandler(e,postArea, postTitle));
+    postButton.addEventListener('click', (e) => postButtonHandler(e, postArea, postTitle));
+    
 }
 main();

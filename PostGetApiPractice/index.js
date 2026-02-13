@@ -18,7 +18,7 @@ async function getCreateButtons(putButton, postArea, postTitle){
     }
     catch(error){
         window.alert(`Unable to load posts: ${error.message}`);
-        console.log(error);
+        console.error(`Error: ${error}`);
     }
 }
 
@@ -69,7 +69,7 @@ async function putData(postArea, postTitle){
 async function putButtonHandler(e,postArea, postTitle){ //PUT Button handler
     let update = null
     if (selectedPostId == null) {
-        e.target.disabled = true;
+        window.alert("Please click a post to be updated");
         return;
     }
     e.target.disabled = true;
@@ -79,7 +79,7 @@ async function putButtonHandler(e,postArea, postTitle){ //PUT Button handler
     window.alert("Post Updated!");
     }
     catch(error){
-        console.log(`Error: ${error}`);
+        console.error(`Error: ${error}`);
         window.alert(`Unable to update post: ${error.message}`);
     }
     finally{
@@ -115,11 +115,12 @@ async function postButtonHandler(e, postArea, postTitle){
     }
     e.target.disabled = true;
     try{
-    response = await postData(postArea, postTitle);
+    const response = await postData(postArea, postTitle);
     window.alert("POST IS POSTED");
     console.log('Posted!', response);
     }
     catch(error){
+        console.error(`Error: ${error}`);
         window.alert(`POST CANNOT BE POSTED ${error.message}`);
     }
     finally{
@@ -130,7 +131,7 @@ async function postButtonHandler(e, postArea, postTitle){
 async function deleteData(){
     const url = `https://jsonplaceholder.typicode.com/posts/${selectedPostId}`;
     try{
-    response = await fetch(url,{
+    const response = await fetch(url,{
         method : 'DELETE',
     });
     throwForHttpError(response);
@@ -156,7 +157,7 @@ async function deleteButtonHandler(e, postArea, postTitle){
     }
     catch(error){
         window.alert("CANNOT DELETE RESOURCES");
-        console.log(`An error happened ${error.message}`);
+        console.error(`An error happened ${error.message}`);
     }
     finally{
         e.target.disabled = false;

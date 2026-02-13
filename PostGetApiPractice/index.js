@@ -152,6 +152,7 @@ async function deleteButtonHandler(e, postArea, postTitle){
         postArea.value = "";
         postTitle.value = "";
         window.alert(`RESOURCE SUCCESSFULLY DELETED AT ID: ${selectedPostId}`);
+        console.log(response);
     }
     catch(error){
         window.alert("CANNOT DELETE RESOURCES");

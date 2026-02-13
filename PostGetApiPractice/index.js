@@ -86,6 +86,7 @@ async function putButtonHandler(e,postArea, postTitle){ //PUT Button handler
     e.target.disabled = false;
     }
 }
+
 async function postData(postArea, postTitle){
     const url = "https://jsonplaceholder.typicode.com/posts";
     let response = await fetch(url,{
@@ -102,6 +103,7 @@ async function postData(postArea, postTitle){
     throwForHttpError(response);
     return response.json();
 }
+
 async function postButtonHandler(e, postArea, postTitle){ 
     if (!postArea.value){
         window.alert("ENTER A BODY FOR THE POST");
@@ -119,6 +121,41 @@ async function postButtonHandler(e, postArea, postTitle){
     }
     catch(error){
         window.alert(`POST CANNOT BE POSTED ${error.message}`);
+    }
+    finally{
+        e.target.disabled = false;
+    }
+}
+
+async function deleteData(){
+    const url = "https://jsonplaceholder.typicode.com/posts/1";
+    try{
+    response = await fetch(url,{
+        method : 'DELETE',
+    });
+    throwForHttpError(response);
+    return response.json();
+    }
+    catch(error){
+        throw error;
+    }
+}
+
+async function deleteButtonHandler(e, postArea, postTitle){
+    if(!selectedPostId){
+        window.alert("PLEASE CLICK A RESOURCE TO DELETE");
+        return;
+    }
+    e.target.disabled = true;
+    try{
+        let response = await deleteData();
+        postArea.value = "";
+        postTitle.value = "";
+        window.alert("RESOURCE SUCCESSFULLY DELETED");
+    }
+    catch(error){
+        window.alert("CANNOT DELETE RESOURCES");
+        console.log(`An error happened ${error.message}`);
     }
     finally{
         e.target.disabled = false;
@@ -143,6 +180,7 @@ function throwForHttpError(response) {
 }
 
 async function main(){
+    const deleteButton = document.getElementById("deleteButton");
     const postButton = document.getElementById("postButton");
     const putButton = document.getElementById("putButton");
     const postArea = document.getElementById("postArea");
@@ -151,6 +189,7 @@ async function main(){
     getButton.addEventListener('click', (e) => getButtonHandler(e,postArea, postTitle, putButton));
     putButton.addEventListener('click', (e) => putButtonHandler(e,postArea, postTitle));
     postButton.addEventListener('click', (e) => postButtonHandler(e, postArea, postTitle));
+    deleteButton.addEventListener('click', (e) => deleteButtonHandler(e, postArea, postTitle));
     
 }
 main();

@@ -128,7 +128,7 @@ async function postButtonHandler(e, postArea, postTitle){
 }
 
 async function deleteData(){
-    const url = "https://jsonplaceholder.typicode.com/posts/1";
+    const url = `https://jsonplaceholder.typicode.com/posts/${selectedPostId}`;
     try{
     response = await fetch(url,{
         method : 'DELETE',
@@ -151,7 +151,7 @@ async function deleteButtonHandler(e, postArea, postTitle){
         let response = await deleteData();
         postArea.value = "";
         postTitle.value = "";
-        window.alert("RESOURCE SUCCESSFULLY DELETED");
+        window.alert(`RESOURCE SUCCESSFULLY DELETED AT ID: ${selectedPostId}`);
     }
     catch(error){
         window.alert("CANNOT DELETE RESOURCES");

@@ -1,70 +1,57 @@
-from fastapi import FastAPI, HTTPException, status
-from pydantic import BaseModel, field_validator, model_validator
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, model_validator
 from typing import Optional
-from uuid import UUID, uuid4
-
 app = FastAPI()
 
-"""
-Some commands to remember
+postList = [
+    {
+    "title" : "lorem",
+    "body" : "epsum",
+    "id" : "1"
+    },
+    {
+    "title" : "second",
+    "body" : "message",
+    "id" : "2"
+    }
+]
 
-uvicorn main:app --reload (initialize a server for your api)
-curl.exe -H "Content-Type: application/json" "http:/127.0.0.1:8000/{endpoint}" 
-(simple get execution)
+class postType(BaseModel):
+    title : str
+    body : str
 
-Invoke-RestMethod -Uri "http://127.0.0.1:8000/{endpoint}" -Method 
-POST -Headers @{"Content-Type"="application/json"} 
--Body '{"name":"RYC","id":"12"}' (Simple post execution)
-
-curl.exe --json '{\"name\":\"{nameinput}\",\"id\":\"{userid}\"}' 
-"http://127.0.0.1:8000/endpoint"
-
-curl.exe -X POST -H "Content-Type: application/json" 
--d '{\"name\":\"RYC\",\"id\":\"12\"}' "http://127.0.0.1:8000/endpoint"
-(simple post execution)
-
-curl.exe -v --json '{\"name\":\"Test\",\"id\":\"99\"}' "http://127.0.0.1:8000/users"
-(check for headers)
-"""
-
-userlist = {"1": "Bob", "2": "Alice", "3":"Mark", "4": "Charlie", "5":"Kirk"}
-class userInfo(BaseModel):
-    name : str
-    id : Optional[str] = None 
+class PostAddId(postType):
+    id : str = ""
         
-    @model_validator(mode="after")
-    def userInList(model):
-        if model.id in userlist or model.name in userlist.values():
-            raise ValueError("User already in list")
-        return model
-        
+    @model_validator(mode = "after")
+    
+    def assign_id(self):
+        self.id = str(len(postList)+1)
+        return self
+    
+
+@app.get("/v1/posts")
+def postget():
+    return postList
+
+@app.post("/v1/posts")
+def postpost(post: postType):
+    new = PostAddId(**post.model_dump())
+    postList.append(new.model_dump())
+    return new
+
+@app.get("/v1/posts/{postId}")
+def idPostGet(postId: str):
+    foundpost = None
+    for posts in postList:
+        if posts["id"] == postId:
+            foundpost = posts
+    if foundpost == None:
+        raise HTTPException(status_code=404, detail="post not found")
+    return foundpost
 
 @app.get("/")
-def get_root():
+def main_root():
     return {
-        "message" : "Hello World",
-        "users": userlist
-        }
-
-@app.post("/v1/users")
-def create_users(userinfo: userInfo):
-    if userinfo.id is None:
-        print("no id")
-        userinfo.id = str(uuid4())
-    else:
-        print("has id")
-        userinfo.id = userinfo.id
-    userlist[userinfo.id] = userinfo.name
-    return userinfo
-       
-
-@app.get("/v1/users/{userid}")
-def get_users(userid: str):
-    try:
-        username = userlist[userid]
-    except Exception:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "User not found")
-    return {
-        "message" : f"Hello {username}",
-        "userid" : userid
+        "message" : "This is the main root of my fastapi"
     }

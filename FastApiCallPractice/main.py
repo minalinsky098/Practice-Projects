@@ -52,6 +52,13 @@ def idPostGet(postId: str):
 
 @app.get("/")
 def main_root():
+    apiDict = app.openapi() #returns a dict of the whole schema of the api
+    allPaths = app.openapi().get("paths", {}) #get the value of the key "path" returns an empty dict if not found
+    pathkeys = {}
+    for key in (allPaths):
+        pathkeys[key] = {"method": list(allPaths.get(key, {}))}
     return {
-        "message" : "This is the main root of my fastapi"
+        "message" : "This is the main root of my fastapi",
+        "endpoints" : pathkeys,
+        "allEndpoints": allPaths
     }

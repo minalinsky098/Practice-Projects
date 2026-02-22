@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA API practice</title>
+</head>
+<style>
+    body{
+        overflow-y: scroll;
+    }
+</style>
+<body>
+    <h1>Javascript Practice for fetch API with keys</h1>
+    <h2>A fetch API practice project using NASA API</h2>
+    <h3>Date: February 19, 2026</h3>
+    <h2>Astronomy picture of the day</h2>
+    <h3 id = "imageName">NAME</h3>
+    <img id = "APOD" width = "200" height="200">
+    <p id = "apodDescription"></p>
+    <input id = "changeDate" placeholder="2026-02-19"  type = "date">
+    <button id = "changeDateButton">Change APOD Date</button>
+    <h3>ASTEROID HAZARD MONITORING</h3>
+    <input id = "hazardStartDateInput" placeholder="2026-02-19"  type = "date">
+    <input id = "hazardEndDateInput" placeholder="2026-02-19"  type = "date">
+    <button id = "hazardAsteroidButton">Set Date</button>
+    <ul id = "hazardAsteroidList">
+    </ul>
+    <script src = "index.js" defer></script>
+</body>
+</html>
